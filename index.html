@@ -3,205 +3,333 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>مشروع التخرج — كليات بريدة</title>
+  <title>مشروع التخرج — كليات بريدة (محسّن)</title>
+  <!-- مكتبات خارجية عبر CDN: chessboard.js و chess.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/css/chessboard.min.css">
   <style>
     :root{
-      --accent:#9b5de5; --dark:#0d0d0d; --muted:#c4b5fd; --card:#1a1a1a;
+      --accent:#9b5de5; --dark:#0d0d0d; --muted:#c4b5fd; --card:#111;
       font-family: Tahoma, Arial, sans-serif;
     }
-    body{margin:0;background:linear-gradient(135deg,#0d0d0d,#1a0033);color:#fff;line-height:1.6;overflow-x:hidden;}
-    .container{max-width:1000px;margin:0 auto;padding:20px}
-    header{background:#1a1a1a;box-shadow:0 2px 12px rgba(155,93,229,0.6);position:sticky;top:0;z-index:10;}
+    html,body{height:100%;}
+    body{margin:0;background:linear-gradient(135deg,#0d0d0d,#1a0033);color:#fff;line-height:1.6;overflow-x:hidden;min-height:100vh}
+    .container{max-width:1100px;margin:0 auto;padding:20px}
+    header{background:#121212;box-shadow:0 2px 12px rgba(155,93,229,0.6);position:sticky;top:0;z-index:10}
     .nav{display:flex;justify-content:space-between;align-items:center;padding:10px 0}
     .logo{background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;font-weight:700;box-shadow:0 0 12px var(--accent)}
-    nav ul{display:flex;list-style:none;gap:15px;padding:0;margin:0}
-    nav a{text-decoration:none;color:#fff;font-weight:bold;transition:color .3s;cursor:pointer}
-    nav a:hover{color:var(--accent)}
+    nav ul{display:flex;list-style:none;gap:12px;padding:0;margin:0;align-items:center}
+    nav a{color:#fff;text-decoration:none;font-weight:700;cursor:pointer}
+    nav a:hover{color:var(--muted)}
     h1,h2,h3{margin:0 0 10px;color:var(--accent)}
-    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 0 20px rgba(155,93,229,0.3);margin-bottom:20px}
-    button{padding:10px 16px;border:0;border-radius:8px;background:var(--accent);color:#fff;font-weight:bold;cursor:pointer;transition:transform .3s,box-shadow .3s}
-    button:hover{transform:scale(1.05);box-shadow:0 0 15px var(--accent)}
-    img{max-width:100%;border-radius:8px;margin:10px 0;box-shadow:0 0 15px rgba(155,93,229,0.4)}
-    input, textarea {width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #444;background:#111;color:#fff}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 0 20px rgba(155,93,229,0.25);margin-bottom:20px}
+    button{padding:8px 14px;border:0;border-radius:8px;background:var(--accent);color:#fff;font-weight:bold;cursor:pointer;transition:transform .18s,box-shadow .18s}
+    button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(155,93,229,0.12)}
+    img{max-width:100%;border-radius:8px;margin:10px 0}
+    input, textarea {width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #333;background:#0b0b0b;color:#fff}
     #ipResult{margin-top:10px;font-weight:bold;color:var(--muted)}
 
-    /* Popup */
-    .popup-overlay{
-      display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;
+    /* Popup common */
+    .popup-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;opacity:0;transition:opacity .25s ease}
+    .popup-overlay.show{display:flex;opacity:1}
+    .popup{background:#0f0f12;padding:18px;border-radius:12px;max-width:960px;width:95%;color:#fff;box-shadow:0 0 24px rgba(155,93,229,0.6);position:relative;}
+    .close-btn{position:absolute;top:10px;left:10px;background:#222;border:0;color:#fff;border-radius:50%;width:32px;height:32px;cursor:pointer;font-weight:bold}
+
+    /* XO board */
+    .board-xo{display:grid;grid-template-columns:repeat(3,100px);gap:8px;justify-content:center}
+    .cell{width:100px;height:100px;background:#121212;border-radius:8px;font-size:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 0 0 2px rgba(255,255,255,0.02)}
+    .status{margin-top:10px;color:var(--muted);text-align:center}
+    .scores{display:flex;gap:10px;justify-content:center;margin-top:8px}
+
+    /* Chess area */
+    .chess-grid{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
+    .info-box{background:#0b0b0b;border-radius:8px;padding:12px}
+    .tutorial{margin-top:10px}
+    .tutorial .piece{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+    .small{font-size:14px;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .chess-grid{grid-template-columns:1fr}
+      .board-xo{grid-template-columns:repeat(3,80px);gap:6px}
+      .cell{width:80px;height:80px;font-size:34px}
     }
-    .popup{
-      background:#111;padding:20px;border-radius:12px;max-width:400px;width:95%;color:#fff;
-      box-shadow:0 0 20px rgba(155,93,229,0.8);text-align:center;position:relative;
-    }
-    .popup h2{color:var(--accent);margin-bottom:10px}
-    .close-btn{
-      position:absolute;top:10px;left:10px;background:#333;border:0;color:#fff;
-      border-radius:50%;width:28px;height:28px;cursor:pointer;font-weight:bold;
-    }
-    .board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}
-    .cell{
-      width:100px;height:100px;background:#1a1a1a;border-radius:8px;font-size:32px;
-      display:flex;align-items:center;justify-content:center;cursor:pointer;
-    }
-    .status{margin-top:10px;color:var(--muted)}
   </style>
 </head>
 <body>
   <header>
     <div class="container nav">
-      <div class="logo">🔒 مشروع التخرج</div>
+      <div class="logo">🔒 مشروع التخرج — تحسين</div>
       <nav>
         <ul>
           <li><a href="#about">عن المشروع</a></li>
-          <li><a href="#ip">عن الـIP</a></li>
-          <li><a href="#cyber">الأمن السيبراني</a></li>
-          <li><a href="#gallery">معرض الصور</a></li>
-          <li><a href="#contact">تواصل</a></li>
-          <li><a id="openGame">🎮 إلعب XO</a></li>
+          <li><a id="openXO">🎮 إلعب XO</a></li>
+          <li><a id="openChess">♟️ إلعب الشطرنج</a></li>
+          <li><a href="#ipSection">🔐 عن الـIP</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <!-- أقسامك الأصلية -->
     <section id="about" class="card">
-      <h1>مشروع التخرج — كليات بريدة</h1>
+      <h1>مشروع التخرج — كليات بريدة (محسّن)</h1>
       <p>التخصص: <strong>الأمن السيبراني</strong></p>
       <p>إعداد الطالب: <strong>حمود عبد الكريم</strong></p>
-      <p>هذا الموقع عبارة عن نموذج لمشروع التخرج يشرح مفاهيم تقنية أساسية ويعرض مثال عملي لكيفية جلب عنوان IP الخاص بالمستخدم.</p>
+      <p>هذه النسخة تحتوي على تحسينات عامة، لعبة XO محسّنة، إضافة لعبة شطرنج مع وضع تعليمي وذكاء اصطناعي بسيط، ومعالجة أخطاء عند جلب الـ IP.</p>
     </section>
-    <section id="ip" class="card">
+
+    <section id="ipSection" class="card">
       <h2>🔐 ما هو الـ IP؟</h2>
       <button onclick="getIP()">اعرض عنوان IP الخاص بي</button>
       <div id="ipResult"></div>
     </section>
-    <!-- باقي الأقسام ... -->
   </main>
 
   <footer class="container" style="text-align:center;color:var(--muted);padding:20px 0">
     &copy; 2025 — كليات بريدة — الطالب حمود عبد الكريم — تخصص الأمن السيبراني
   </footer>
 
-  <!-- Popup للعبة -->
-  <div class="popup-overlay" id="popupOverlay">
+  <!-- Popup XO -->
+  <div class="popup-overlay" id="popupXO">
     <div class="popup">
-      <button class="close-btn" id="closePopup">✖</button>
-      <h2>لعبة XO</h2>
-      <div class="board" id="board">
-        <div class="cell" data-i="0"></div>
-        <div class="cell" data-i="1"></div>
-        <div class="cell" data-i="2"></div>
-        <div class="cell" data-i="3"></div>
-        <div class="cell" data-i="4"></div>
-        <div class="cell" data-i="5"></div>
-        <div class="cell" data-i="6"></div>
-        <div class="cell" data-i="7"></div>
-        <div class="cell" data-i="8"></div>
+      <button class="close-btn" data-target="popupXO">✖</button>
+      <h2>لعبة XO — إسطوانة محسّنة</h2>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;justify-content:center">
+        <div>
+          <div class="board-xo" id="xoBoard">
+            <div class="cell" data-i="0"></div>
+            <div class="cell" data-i="1"></div>
+            <div class="cell" data-i="2"></div>
+            <div class="cell" data-i="3"></div>
+            <div class="cell" data-i="4"></div>
+            <div class="cell" data-i="5"></div>
+            <div class="cell" data-i="6"></div>
+            <div class="cell" data-i="7"></div>
+            <div class="cell" data-i="8"></div>
+          </div>
+          <p class="status" id="xoStatus">دورك الآن</p>
+          <div class="scores">
+            <div class="info-box small">أنت: <span id="scorePlayer">0</span></div>
+            <div class="info-box small">الـAI: <span id="scoreAI">0</span></div>
+            <div class="info-box small">تعادلات: <span id="scoreDraw">0</span></div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
+            <button id="resetXO">إعادة</button>
+            <button id="toggleAIFirst">اجعل الـAI يبدأ</button>
+          </div>
+        </div>
       </div>
-      <p class="status" id="status">دورك الآن</p>
     </div>
   </div>
 
+  <!-- Popup Chess -->
+  <div class="popup-overlay" id="popupChess">
+    <div class="popup" style="max-width:1100px">
+      <button class="close-btn" data-target="popupChess">✖</button>
+      <h2>♟️ لعبة الشطرنج — العب وتعلم</h2>
+      <div class="chess-grid">
+        <div>
+          <div id="board" style="width:100%"></div>
+        </div>
+        <div>
+          <div class="info-box">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="small">الوضع: <strong id="gameStatusText">اللاعب ضد الكمبيوتر</strong></div>
+                <div class="small">الدور: <strong id="turnText">أبيض</strong></div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button id="newGameChess">جديد</button>
+                <button id="undoMove">تراجع</button>
+                <button id="toggleTutorial">وضع التعلم</button>
+              </div>
+            </div>
+
+            <div class="tutorial" id="tutorialArea" style="display:none;margin-top:12px">
+              <h3 class="small">تعلم تحريك القطع</h3>
+              <div class="piece"><div style="font-size:22px">♔</div><div><strong>الملك</strong> — يتحرك مربع واحد في أي اتجاه.</div></div>
+              <div class="piece"><div style="font-size:22px">♕</div><div><strong>الوزير</strong> — تتحرك في جميع الاتجاهات بعدد مربعات غير محدود.</div></div>
+              <div class="piece"><div style="font-size:22px">♖</div><div><strong>القلعة</strong> — تتحرك أفقياً أو عمودياً بعدد مربعات غير محدود.</div></div>
+              <div class="piece"><div style="font-size:22px">♗</div><div><strong>الفيل</strong> — يتحرك قطرياً بعدد مربعات غير محدود.</div></div>
+              <div class="piece"><div style="font-size:22px">♘</div><div><strong>الحصان</strong> — يتحرك بشكل L: مربعان ثم واحد بزاوية قائمة.</div></div>
+              <div class="piece"><div style="font-size:22px">♙</div><div><strong>البيادق</strong> — تتحرك للأمام مربع واحد، لأول مرة يمكنها التحرك مربعين؛ تأسر قطريًا.</div></div>
+              <div class="small" style="margin-top:8px">انقر على قطعة لرؤية الحركات الممكنة (تتميّز بمؤشر).</div>
+            </div>
+
+            <div id="moveLog" style="margin-top:10px;max-height:220px;overflow:auto;background:#070707;padding:8px;border-radius:6px;font-size:13px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- مكتبات خارجية -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/1.0.0/chess.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/js/chessboard.min.js"></script>
+
   <script>
-    // زر فتح/إغلاق
-    const popupOverlay = document.getElementById('popupOverlay');
-    document.getElementById('openGame').onclick = ()=> popupOverlay.style.display="flex";
-    document.getElementById('closePopup').onclick = ()=> popupOverlay.style.display="none";
-
-    // لعبة XO
-    const cells = document.querySelectorAll('.cell');
-    const statusEl = document.getElementById('status');
-    let board = Array(9).fill(null);
-    let player = "X", ai = "O", currentTurn = "X", gameOver=false;
-
-    cells.forEach(cell=>{
-      cell.onclick=()=>{
-        const i = cell.dataset.i;
-        if(gameOver || board[i]) return;
-        if(currentTurn!==player) return;
-        makeMove(i, player);
-        afterMove();
-      };
+    /***************** عناصر متكررة (فتح وغلق النوافذ) *****************/
+    function openPopup(id){
+      const el=document.getElementById(id);
+      el.classList.add('show');
+    }
+    function closePopup(id){
+      const el=document.getElementById(id);
+      el.classList.remove('show');
+      setTimeout(()=>{ if(!el.classList.contains('show')) el.style.display='none'; },260);
+    }
+    // أزرار القائمة
+    document.getElementById('openXO').onclick = ()=>{
+      const pop=document.getElementById('popupXO'); pop.style.display='flex'; setTimeout(()=>pop.classList.add('show'),10);
+    }
+    document.getElementById('openChess').onclick = ()=>{
+      const pop=document.getElementById('popupChess'); pop.style.display='flex'; setTimeout(()=>pop.classList.add('show'),10);
+      // عند الفتح نهيئ الشطرنج
+      initChess();
+    }
+    document.querySelectorAll('.close-btn').forEach(b=>b.onclick=(e)=>{
+      const t=b.getAttribute('data-target');
+      if(t) {document.getElementById(t).classList.remove('show'); document.getElementById(t).style.display='none';}
+      else { // backup
+        b.closest('.popup-overlay').classList.remove('show'); b.closest('.popup-overlay').style.display='none';
+      }
     });
 
-    function makeMove(i, symbol){
-      board[i]=symbol;
-      cells[i].textContent=symbol;
+    /***************** XO — محسّن *****************/
+    const xoCells=document.querySelectorAll('#xoBoard .cell');
+    let xoBoard=Array(9).fill(null); let xoPlayer='X', xoAI='O', xoTurn='X', xoGameOver=false;
+    let scorePlayer=0, scoreAI=0, scoreDraw=0; let xoAIFirst=false;
+    function xoMakeMove(i,symbol){ xoBoard[i]=symbol; xoCells[i].textContent=symbol; }
+    function xoCheckWinner(b){ const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(const [a,c,d] of lines) if(b[a]&&b[a]===b[c]&&b[a]===b[d]) return b[a]; return null; }
+    function xoAfterMove(){ const w=xoCheckWinner(xoBoard); if(w){ xoEnd(w); return;} if(xoBoard.every(x=>x)){ xoEnd('draw'); return;} xoTurn = (xoTurn==='X')?'O':'X'; document.getElementById('xoStatus').textContent = (xoTurn===xoPlayer)? 'دورك الآن' : 'جاري تفكير الـAI...'; if(xoTurn===xoAI){ setTimeout(()=>{ const best=findBestMove([...xoBoard],xoAI); xoMakeMove(best.index,xoAI); xoAfterMove(); },300); } }
+    function xoEnd(result){ xoGameOver=true; if(result==='draw'){ document.getElementById('xoStatus').textContent='تعادل!'; scoreDraw++; document.getElementById('scoreDraw').textContent=scoreDraw; } else if(result===xoPlayer){ document.getElementById('xoStatus').textContent='فزت 🎉'; scorePlayer++; document.getElementById('scorePlayer').textContent=scorePlayer; } else { document.getElementById('xoStatus').textContent='الـAI فاز 😅'; scoreAI++; document.getElementById('scoreAI').textContent=scoreAI; } setTimeout(xoReset,1200);
     }
-
-    function afterMove(){
-      const winner=checkWinner(board);
-      if(winner){ endGame(winner); return;}
-      if(board.every(x=>x)) { endGame("draw"); return;}
-      currentTurn=(currentTurn==="X")?"O":"X";
-      if(currentTurn===ai){
-        const best=findBestMove(board, ai);
-        makeMove(best.index, ai);
-        afterMove();
-      } else {
-        statusEl.textContent="دورك الآن";
-      }
+    function xoReset(){ xoBoard=Array(9).fill(null); xoCells.forEach(c=>c.textContent=''); xoGameOver=false; xoTurn='X'; document.getElementById('xoStatus').textContent='دورك الآن'; if(xoAIFirst){ xoTurn=xoAI; setTimeout(()=>{ const best=findBestMove([...xoBoard],xoAI); xoMakeMove(best.index,xoAI); xoAfterMove(); },300); }
     }
+    xoCells.forEach(cell=>cell.onclick=()=>{ const i=Number(cell.dataset.i); if(xoGameOver||xoBoard[i]||xoTurn!==xoPlayer) return; xoMakeMove(i,xoPlayer); xoAfterMove(); });
+    document.getElementById('resetXO').onclick=xoReset;
+    document.getElementById('toggleAIFirst').onclick=()=>{xoAIFirst=!xoAIFirst; document.getElementById('toggleAIFirst').textContent = xoAIFirst? 'الـAI يبدأ' : 'اجعل الـAI يبدأ'; xoReset(); }
 
-    function checkWinner(b){
-      const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      for(const [a,b1,c] of lines){ if(b[a]&&b[a]===b[b1]&&b[a]===b[c]) return b[a]; }
-      return null;
-    }
+    // Minimax for XO (tic-tac-toe) — صغير وفعّال
+    function minimaxXO(b,depth,isMax){ const winner=xoCheckWinner(b); if(winner===xoAI) return 10-depth; if(winner===xoPlayer) return depth-10; if(b.every(x=>x)) return 0; if(isMax){ let best=-Infinity; for(let i=0;i<9;i++) if(!b[i]){ b[i]=xoAI; best=Math.max(best,minimaxXO(b,depth+1,false)); b[i]=null; } return best; } else { let best=Infinity; for(let i=0;i<9;i++) if(!b[i]){ b[i]=xoPlayer; best=Math.min(best,minimaxXO(b,depth+1,true)); b[i]=null; } return best; } }
+    function findBestMove(bState, aiSymbol){ let bestVal=-Infinity, moveIndex=0; for(let i=0;i<9;i++){ if(!bState[i]){ bState[i]=aiSymbol; const val=minimaxXO(bState,0,false); bState[i]=null; if(val>bestVal){ bestVal=val; moveIndex=i; } } } return {index:moveIndex}; }
 
-    function endGame(result){
-      gameOver=true;
-      statusEl.textContent=(result==="draw")?"تعادل!":(result===player?"فزت 🎉":"الـAI فاز 😅");
-      // إعادة اللعبة تلقائيًا بعد ثانيتين
-      setTimeout(resetGame, 2000);
-    }
-
-    function resetGame(){
-      board = Array(9).fill(null);
-      cells.forEach(c => c.textContent="");
-      gameOver=false;
-      currentTurn="X"; // اللاعب يبدأ دائمًا
-      statusEl.textContent="دورك الآن";
-    }
-
-    function findBestMove(bState, aiSymbol){
-      let bestVal=-Infinity, moveIndex=-1;
-      for(let i=0;i<9;i++){
-        if(!bState[i]){
-          bState[i]=aiSymbol;
-          const val=minimax(bState,0,false);
-          bState[i]=null;
-          if(val>bestVal){bestVal=val;moveIndex=i;}
-        }
-      }
-      return {index:moveIndex};
-    }
-
-    function minimax(boardArr,depth,isMax){
-      const winner=checkWinner(boardArr);
-      if(winner===ai) return 10-depth;
-      if(winner===player) return depth-10;
-      if(boardArr.every(x=>x)) return 0;
-
-      if(isMax){
-        let best=-Infinity;
-        for(let i=0;i<9;i++){if(!boardArr[i]){boardArr[i]=ai;best=Math.max(best,minimax(boardArr,depth+1,false));boardArr[i]=null;}}
-        return best;
-      } else {
-        let best=Infinity;
-        for(let i=0;i<9;i++){if(!boardArr[i]){boardArr[i]=player;best=Math.min(best,minimax(boardArr,depth+1,true));boardArr[i]=null;}}
-        return best;
-      }
-    }
-
-    // جلب IP
+    /***************** جلب IP مع معالجة الأخطاء *****************/
     async function getIP(){
-      const res = await fetch('https://api.ipify.org?format=json');
-      const data = await res.json();
-      document.getElementById('ipResult').textContent = "عنوان IP الخاص بك: " + data.ip;
+      const resultEl=document.getElementById('ipResult');
+      resultEl.textContent='جاري الجلب...';
+      try{
+        const res=await fetch('https://api.ipify.org?format=json');
+        if(!res.ok) throw new Error('فشل الاستجابة');
+        const data=await res.json();
+        resultEl.textContent = 'عنوان IP الخاص بك: ' + data.ip;
+      }catch(e){
+        resultEl.textContent = 'حدث خطأ أثناء جلب عنوان الـ IP — تحقق من اتصالك أو حاول لاحقًا.';
+      }
     }
+
+    /***************** شطرنج — تهيئة اللعبة مع وضع تعليمي وذكاء اصطناعي بسيط *****************/
+    // ملاحظات: نستخدم Chessboard.js للواجهة وChess.js للمنطق (كلاهما عبر CDN أعلاه). الذكاء الاصطناعي هنا هو Minimax بسيط مع تقييم مادي.
+    let boardObj=null, chess=null, tutorialOn=false; let aiThinking=false; let playerColor='w';
+
+    function initChess(){
+      if(window._chessInitialized) return; // تهيئة مرة واحدة
+      window._chessInitialized=true;
+      chess = new Chess();
+      const cfg = {
+        draggable: true,
+        position: 'start',
+        onDragStart: onDragStart,
+        onDrop: onDrop,
+        onMouseoverSquare: onMouseoverSquare,
+        onMouseoutSquare: onMouseoutSquare,
+        onSnapEnd: onSnapEnd,
+        pieceTheme: 'https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/img/chesspieces/wikipedia/{piece}.png'
+      };
+      boardObj = Chessboard('board', cfg);
+      updateStatus();
+
+      document.getElementById('newGameChess').onclick = ()=>{ chess.reset(); boardObj.position(chess.fen()); updateStatus(); }
+      document.getElementById('undoMove').onclick = ()=>{ chess.undo(); boardObj.position(chess.fen()); updateStatus(); }
+      document.getElementById('toggleTutorial').onclick = ()=>{ tutorialOn = !tutorialOn; document.getElementById('tutorialArea').style.display = tutorialOn? 'block':'none'; }
+    }
+
+    function onDragStart(source, piece, position, orientation){
+      // منع التحريك إذا انتهت اللعبة أو ليس دور اللاعب
+      if(chess.game_over()) return false;
+      if((chess.turn() === 'w' && piece.search(/^b/) !== -1) || (chess.turn() === 'b' && piece.search(/^w/) !== -1)) return false;
+      // إذا أردنا اللاعب أن يلعب دائمًا بأبيض، نمنع حركة السود
+      return true;
+    }
+
+    function onDrop(source, target){
+      removeGreySquares();
+      const move = chess.move({from: source, to: target, promotion: 'q'});
+      if(move === null) { return 'snapback'; }
+      boardObj.position(chess.fen());
+      logMove(move);
+      updateStatus();
+      // إذا لم تنته اللعبة، دع الـAI يلعب
+      if(!chess.game_over()){ setTimeout(() => { aiMakeMove(); }, 400); }
+    }
+
+    function onMouseoverSquare(square, piece){
+      if(!tutorialOn) return;
+      // إبراز الحركات الممكنة من المربع
+      const moves = chess.moves({square: square, verbose: true});
+      if(moves.length === 0) return;
+      greySquare(square);
+      moves.forEach(m => greySquare(m.to));
+    }
+    function onMouseoutSquare(square, piece){ if(!tutorialOn) return; removeGreySquares(); }
+    function removeGreySquares(){ const squares = document.querySelectorAll('#board .square-55d63'); squares.forEach(s=>s.style.background=''); }
+    function greySquare(square){ const sq = document.querySelector('#board .square-' + square); if(sq) sq.style.background = 'radial-gradient(circle at 30% 30%, rgba(155,93,229,0.18), rgba(0,0,0,0))'; }
+    function onSnapEnd(){ boardObj.position(chess.fen()); }
+
+    function updateStatus(){
+      const statusText = document.getElementById('gameStatusText'); const turnText = document.getElementById('turnText');
+      let status = '';
+      const moveColor = (chess.turn() === 'w') ? 'أبيض' : 'أسود';
+      turnText.textContent = moveColor;
+      if(chess.in_checkmate()) status = 'كش مات — انتهت اللعبة';
+      else if(chess.in_draw()) status = 'تعادل — انتهت اللعبة';
+      else if(chess.in_check()) status = 'كش — اللاعب تحت التهديد';
+      else status = 'نشطة';
+      statusText.textContent = 'اللاعب ضد الكمبيوتر — الحالة: ' + status;
+      // لوج الحركات
+      const history = chess.history({verbose:true});
+      const log = document.getElementById('moveLog'); log.innerHTML = '';
+      history.forEach((m,i)=>{ const p = document.createElement('div'); p.textContent = (i+1)+'. ' + m.san; log.appendChild(p); });
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function logMove(move){ /* يمكن توسيعها لاحقًا */ }
+
+    /* AI شطرنج — Minimax مع تقييم بسيط */
+    const pieceValue = {p:100, n:320, b:330, r:500, q:900, k:20000};
+    function evaluateBoard(game){ let total = 0; const board = game.board(); for(let r=0;r<8;r++) for(let f=0;f<8;f++){ const piece = board[r][f]; if(piece){ const val = pieceValue[piece.type] || 0; total += (piece.color === 'w')? val : -val; } } return total; }
+
+    function minimax(game, depth, alpha, beta, isMax){
+      if(depth === 0 || game.game_over()) return evaluateBoard(game);
+      const moves = game.moves();
+      if(isMax){ let maxEval = -Infinity; for(const m of moves){ game.move(m); const eval = minimax(game, depth-1, alpha, beta, false); game.undo(); if(eval > maxEval) maxEval = eval; if(eval > alpha) alpha = eval; if(beta <= alpha) break; } return maxEval; }
+      else { let minEval = Infinity; for(const m of moves){ game.move(m); const eval = minimax(game, depth-1, alpha, beta, true); game.undo(); if(eval < minEval) minEval = eval; if(eval < beta) beta = eval; if(beta <= alpha) break; } return minEval; }
+    }
+
+    function aiMakeMove(){ if(aiThinking) return; aiThinking=true; // اللاعب الذي يلعب هو عكس الدور الحالي
+      const depth = 2; // قابل للزيادة — لكن سيزداد زمن المعالجة
+      let bestMove = null; let bestEval = -Infinity; const moves = chess.moves();
+      for(const m of moves){ chess.move(m); const eval = minimax(chess, depth-1, -Infinity, Infinity, false); chess.undo(); if(eval > bestEval){ bestEval = eval; bestMove = m; } }
+      if(bestMove){ chess.move(bestMove); boardObj.position(chess.fen()); logMove(bestMove); updateStatus(); }
+      aiThinking=false;
+    }
+
+    // مسح وإظهار تعليمات عند فتح لأول مرة
+    (function initOnce(){
+      // تعيين النصوص الافتراضية
+      document.getElementById('toggleAIFirst').textContent = 'اجعل الـAI يبدأ';
+    })();
+
   </script>
 </body>
 </html>
