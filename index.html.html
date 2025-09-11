@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مشروع التخرج — كليات بريدة</title>
+  <meta name="description" content="موقع عرض لمشروع التخرج — تخصص الأمن السيبراني — الطالب حمود عبد الكريم">
+  <style>
+    :root{
+      --accent:#9b5de5; /* بنفسجي */
+      --dark:#0d0d0d; /* أسود غامق */
+      --muted:#c4b5fd; /* بنفسجي فاتح */
+      --card:#1a1a1a; /* خلفية البطاقات */
+      font-family: Tahoma, Arial, sans-serif;
+    }
+    body{
+      margin:0;
+      background:linear-gradient(135deg,#0d0d0d,#1a0033);
+      color:#fff;
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+    .container{max-width:1000px;margin:0 auto;padding:20px}
+    header{
+      background:#1a1a1a;
+      box-shadow:0 2px 12px rgba(155,93,229,0.6);
+      position:sticky;top:0;z-index:10;
+    }
+    .nav{display:flex;justify-content:space-between;align-items:center;padding:10px 0}
+    .logo{background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;font-weight:700;box-shadow:0 0 12px var(--accent)}
+    nav ul{display:flex;list-style:none;gap:15px;padding:0;margin:0}
+    nav a{text-decoration:none;color:#fff;font-weight:bold;transition:color .3s}
+    nav a:hover{color:var(--accent)}
+    h1,h2,h3{margin:0 0 10px;color:var(--accent)}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 0 20px rgba(155,93,229,0.3);margin-bottom:20px}
+    button{padding:10px 16px;border:0;border-radius:8px;background:var(--accent);color:#fff;font-weight:bold;cursor:pointer;transition:transform .3s,box-shadow .3s}
+    button:hover{transform:scale(1.05);box-shadow:0 0 15px var(--accent)}
+    #ipResult{margin-top:10px;font-weight:bold;color:var(--muted)}
+    img{max-width:100%;border-radius:8px;margin:10px 0;box-shadow:0 0 15px rgba(155,93,229,0.4)}
+    input, textarea {
+      width:100%;padding:10px;margin:6px 0;border-radius:8px;
+      border:1px solid #444;background:#111;color:#fff
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="logo">🔒 مشروع التخرج</div>
+      <nav>
+        <ul>
+          <li><a href="#about">عن المشروع</a></li>
+          <li><a href="#ip">عن الـIP</a></li>
+          <li><a href="#cyber">الأمن السيبراني</a></li>
+          <li><a href="#gallery">معرض الصور</a></li>
+          <li><a href="#contact">تواصل</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="login" class="card">
+      <h2>🔑 تسجيل الدخول</h2>
+      <form id="loginForm">
+        <input type="text" id="loginUser" placeholder="اسم المستخدم" required>
+        <input type="password" id="loginPass" placeholder="كلمة المرور" required>
+        <button type="submit">تسجيل الدخول</button>
+        <p id="loginStatus" style="color:var(--muted);"></p>
+      </form>
+    </section>
+
+    <section id="about" class="card">
+      <h1>مشروع التخرج — كليات بريدة</h1>
+      <p>التخصص: <strong>الأمن السيبراني</strong></p>
+      <p>إعداد الطالب: <strong>حمود عبد الكريم</strong></p>
+      <p>هذا الموقع عبارة عن نموذج لمشروع التخرج يشرح مفاهيم تقنية أساسية ويعرض مثال عملي لكيفية جلب عنوان IP الخاص بالمستخدم.</p>
+    </section>
+
+    <section id="ip" class="card">
+      <h2>🔐 ما هو الـ IP؟</h2>
+      <p>الـIP هو اختصار لـ <strong>Internet Protocol Address</strong>، ويعني العنوان الرقمي الذي يُستخدم للتعريف بجهازك على شبكة الإنترنت أو الشبكة المحلية.</p>
+      <ul>
+        <li>تحديد موقع الجهاز على الشبكة.</li>
+        <li>تسهيل عملية الاتصال بين الأجهزة والخوادم.</li>
+        <li>الحماية وتطبيق سياسات الأمان.</li>
+      </ul>
+      <button onclick="getIP()">اعرض عنوان IP الخاص بي</button>
+      <div id="ipResult"></div>
+    </section>
+
+    <section id="cyber" class="card">
+      <h2>🛡️ أهمية الأمن السيبراني</h2>
+      <p>الأمن السيبراني لم يعد رفاهية بل ضرورة حياتية. مع التقدم التقني وانتشار الإنترنت في كل تفاصيل حياتنا، أصبحت حماية البيانات مسؤولية لا غنى عنها.</p>
+      <p>أسباب أهمية الأمن السيبراني:</p>
+      <ul>
+        <li><strong>حماية الهوية الرقمية:</strong> كل شخص يملك حسابات وبريد إلكتروني وملفات شخصية معرضة للسرقة إن لم تُحمى جيداً.</li>
+        <li><strong>حماية المؤسسات:</strong> الشركات والبنوك تعتمد على أنظمة رقمية، وأي اختراق قد يسبب خسائر مالية هائلة.</li>
+        <li><strong>التشفير:</strong> هو السلاح الأقوى لحماية البيانات الحساسة ومنع الوصول غير المصرح به.</li>
+        <li><strong>الأمن الوطني:</strong> الدول تعتمد على أنظمة سيبرانية قوية لحماية البنية التحتية من الهجمات.</li>
+      </ul>
+      <p>لذلك، يجب أن يعي كل فرد أن بياناته ليست مجرد أرقام أو كلمات مرور، بل هي انعكاس لحياته وهويته.</p>
+    </section>
+
+    <section id="gallery" class="card">
+      <h2>🖼️ معرض الصور — الأمن السيبراني</h2>
+      <img src="https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=1200" alt="صورة قفل سيبراني">
+      <img src="https://images.unsplash.com/photo-1605902711622-cfb43c4437e1?w=1200" alt="أمن الشبكات">
+      <img src="https://images.unsplash.com/photo-1633265486064-086b2194587e?w=1200" alt="شاشة برمجة وسيبرانية">
+    </section>
+
+    <section id="contact" class="card">
+      <h2>✉️ تواصل معنا</h2>
+      <form id="contactForm">
+        <input type="text" id="name" placeholder="اسمك" required>
+        <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+        <textarea id="message" rows="5" placeholder="اكتب رسالتك" required></textarea>
+        <button type="submit">أرسل</button>
+        <p id="status" style="color:var(--muted);"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="container" style="text-align:center;color:var(--muted);padding:20px 0">
+    &copy; 2025 — كليات بريدة — الطالب حمود عبد الكريم — تخصص الأمن السيبراني
+  </footer>
+
+  <script>
+    // جلب عنوان IP باستخدام ipify
+    async function getIP(){
+      const res = await fetch('https://api.ipify.org?format=json');
+      const data = await res.json();
+      document.getElementById('ipResult').textContent = "عنوان IP الخاص بك: " + data.ip;
+    }
+
+    // نموذج تواصل بسيط (حفظ محلي)
+    const form = document.getElementById('contactForm');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      status.textContent = 'تم استلام رسالتك (تم الحفظ محلياً).';
+      form.reset();
+    });
+
+    // تسجيل دخول بسيط
+    const loginForm = document.getElementById('loginForm');
+    const loginStatus = document.getElementById('loginStatus');
+
+    loginForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+
+      if(user === 'admin' && pass === '1234'){
+        loginStatus.textContent = 'تم تسجيل الدخول بنجاح ✅';
+      } else {
+        loginStatus.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة ❌';
+      }
+    });
+  </script>
+</body>
+</html>
