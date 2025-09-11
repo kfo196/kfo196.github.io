@@ -154,6 +154,16 @@
     function endGame(result){
       gameOver=true;
       statusEl.textContent=(result==="draw")?"تعادل!":(result===player?"فزت 🎉":"الـAI فاز 😅");
+      // إعادة اللعبة تلقائيًا بعد ثانيتين
+      setTimeout(resetGame, 2000);
+    }
+
+    function resetGame(){
+      board = Array(9).fill(null);
+      cells.forEach(c => c.textContent="");
+      gameOver=false;
+      currentTurn="X"; // اللاعب يبدأ دائمًا
+      statusEl.textContent="دورك الآن";
     }
 
     function findBestMove(bState, aiSymbol){
