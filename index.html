@@ -7,10 +7,10 @@
   <meta name="description" content="موقع عرض لمشروع التخرج — تخصص الأمن السيبراني — الطالب حمود عبد الكريم">
   <style>
     :root{
-      --accent:#9b5de5; /* بنفسجي */
-      --dark:#0d0d0d; /* أسود غامق */
-      --muted:#c4b5fd; /* بنفسجي فاتح */
-      --card:#1a1a1a; /* خلفية البطاقات */
+      --accent:#9b5de5;
+      --dark:#0d0d0d;
+      --muted:#c4b5fd;
+      --card:#1a1a1a;
       font-family: Tahoma, Arial, sans-serif;
     }
     html { scroll-behavior:smooth; }
@@ -35,20 +35,19 @@
 
 
     header{
-      background:rgba(26,26,26,0.9);
+      background:rgba(26,26,26,0.95);
       backdrop-filter: blur(8px);
       position: sticky; top: 0; z-index: 100;
       border-bottom: 1px solid rgba(155,93,229,0.25);
     }
     .nav{
-      display:flex; align-items:center; gap:16px; padding:12px 0;
+      display:flex; align-items:center; justify-content:space-between; padding:12px 0;
     }
     .logo{
       background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;
       font-weight:700;box-shadow:0 0 12px var(--accent);
       white-space:nowrap;
     }
-
     nav ul{display:flex;list-style:none;gap:16px;padding:0;margin:0}
     nav a{
       text-decoration:none;color:#fff;font-weight:bold; padding:8px 10px; border-radius:8px;
@@ -59,7 +58,7 @@
       box-shadow:0 0 0 1px rgba(155,93,229,0.35) inset;
     }
 
-
+  
     .menu-toggle{
       display:none;
       border:0; background:transparent; cursor:pointer;
@@ -73,37 +72,19 @@
     .menu-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
     .menu-toggle[aria-expanded="true"] span:nth-child(3){ transform: translateY(-9px) rotate(-45deg); }
 
+
     @media (max-width: 900px){
       .menu-toggle{ display:block; }
-   
-      .nav{ justify-content:space-between; }
-
-      header .nav{ position:relative; }
-      header nav{
-        position:absolute; inset-inline:0; top:100%;
+      nav ul { display:none; flex-direction:column; gap:6px; padding:10px; }
+      nav.open ul { display:flex; }
+      nav{
+        position:absolute; top:100%; right:0; left:0;
         background:rgba(26,26,26,0.98);
         border:1px solid rgba(155,93,229,0.25);
         border-radius:12px;
         box-shadow:0 12px 24px rgba(0,0,0,.35);
-        transform-origin: top;
-        transform: scaleY(0);
-        opacity:0; visibility:hidden;
-        transition: transform .25s ease, opacity .25s ease, visibility 0s .25s;
         margin-top:8px;
       }
-      header nav.open{
-        transform: scaleY(1);
-        opacity:1; visibility:visible;
-        transition: transform .25s ease, opacity .25s ease;
-      }
-      nav ul{ flex-direction:column; gap:6px; padding:10px; }
-      nav a{ display:block; padding:12px; }
-    }
-
-    
-    @media (hover:none){
-      nav a{ padding:14px; }
-      button{ padding:12px 18px; }
     }
   </style>
 </head>
@@ -111,12 +92,10 @@
 
   <header>
     <div class="container nav">
+      <div class="logo">🔒 مشروع التخرج</div>
       <button class="menu-toggle" aria-label="فتح القائمة" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
-
-      <div class="logo">🔒 مشروع التخرج</div>
-
       <nav>
         <ul>
           <li><a href="#about">عن المشروع</a></li>
@@ -162,14 +141,12 @@
     <section id="cyber" class="card">
       <h2>🛡️ أهمية الأمن السيبراني</h2>
       <p>الأمن السيبراني لم يعد رفاهية بل ضرورة حياتية. مع التقدم التقني وانتشار الإنترنت في كل تفاصيل حياتنا، أصبحت حماية البيانات مسؤولية لا غنى عنها.</p>
-      <p>أسباب أهمية الأمن السيبراني:</p>
       <ul>
         <li><strong>حماية الهوية الرقمية:</strong> كل شخص يملك حسابات وبريد إلكتروني وملفات شخصية معرضة للسرقة إن لم تُحمى جيداً.</li>
         <li><strong>حماية المؤسسات:</strong> الشركات والبنوك تعتمد على أنظمة رقمية، وأي اختراق قد يسبب خسائر مالية هائلة.</li>
         <li><strong>التشفير:</strong> هو السلاح الأقوى لحماية البيانات الحساسة ومنع الوصول غير المصرح به.</li>
         <li><strong>الأمن الوطني:</strong> الدول تعتمد على أنظمة سيبرانية قوية لحماية البنية التحتية من الهجمات.</li>
       </ul>
-      <p>لذلك، يجب أن يعي كل فرد أن بياناته ليست مجرد أرقام أو كلمات مرور، بل هي انعكاس لحياته وهويته.</p>
     </section>
 
     <section id="gallery" class="card">
@@ -196,56 +173,27 @@
   </footer>
 
   <script>
-   
+
     const menuBtn = document.querySelector('.menu-toggle');
     const nav = document.querySelector('header nav');
-
-    function closeMenu(){
-      nav.classList.remove('open');
-      menuBtn?.setAttribute('aria-expanded','false');
-      document.body.style.overflow = ''; 
-    }
-    function openMenu(){
-      nav.classList.add('open');
-      menuBtn?.setAttribute('aria-expanded','true');
-      document.body.style.overflow = 'hidden'; 
-    }
-
     menuBtn?.addEventListener('click', () => {
+      nav.classList.toggle('open');
       const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
-      expanded ? closeMenu() : openMenu();
+      menuBtn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
     });
 
-  
-    document.addEventListener('click', (e) => {
-      if (!nav.contains(e.target) && !menuBtn.contains(e.target)) {
-        closeMenu();
-      }
-    });
 
-   
-    nav.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => closeMenu());
-    });
-
-   
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMenu();
-    });
-
-    
     async function getIP(){
       try{
         const res = await fetch('https://api.ipify.org?format=json');
         const data = await res.json();
         document.getElementById('ipResult').textContent = "عنوان IP الخاص بك: " + data.ip;
       }catch(err){
-        document.getElementById('ipResult').textContent = "تعذّر جلب عنوان IP. تأكد من الاتصال بالإنترنت.";
+        document.getElementById('ipResult').textContent = "تعذّر جلب عنوان IP.";
       }
     }
     document.getElementById('showIpBtn')?.addEventListener('click', getIP);
 
-    
     const form = document.getElementById('contactForm');
     const status = document.getElementById('status');
     form.addEventListener('submit', function(e){
@@ -257,12 +205,10 @@
 
     const loginForm = document.getElementById('loginForm');
     const loginStatus = document.getElementById('loginStatus');
-
     loginForm.addEventListener('submit', function(e){
       e.preventDefault();
       const user = document.getElementById('loginUser').value.trim();
       const pass = document.getElementById('loginPass').value.trim();
-
       if(user === 'admin' && pass === '1234'){
         loginStatus.textContent = 'تم تسجيل الدخول بنجاح ✅';
       } else {
